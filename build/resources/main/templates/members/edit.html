@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상담사 수정</title>
+</head>
+<body>
+<form th:action="@{'/members/' + ${member.id} + '/edit'}" method="post">
+    <!-- id는 URL에 있지만, 필요 시 hidden으로도 보낼 수 있음 -->
+    <input type="hidden" name="id" th:value="${member.id}" />
+
+    <div class="mb-3">
+        <label>이름</label>
+        <input class="form-control" type="text" name="name" th:value="${member.name}" required />
+    </div>
+
+    <div class="mb-3">
+        <label>상태</label>
+        <select class="form-control" name="status" required>
+            <option value="ACTIVE" th:selected="${member.status}=='ACTIVE'">ACTIVE</option>
+            <option value="IDLE" th:selected="${member.status}=='IDLE'">IDLE</option>
+            <option value="LEAVE" th:selected="${member.status}=='LEAVE'">LEAVE</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>입사일</label>
+        <input class="form-control" type="date" name="startDate" th:value="${member.startDate}" required />
+    </div>
+
+    <div class="mb-3">
+        <label>퇴사일(재직 중이면 비워두세요)</label>
+        <input class="form-control" type="date" name="endDate" th:value="${member.endDate}" />
+    </div>
+
+    <div class="mb-3">
+        <label>팀</label>
+        <select class="form-control" name="teamId">
+            <option value="" th:selected="${member.teamId == null}">(미배정)</option>
+            <option th:each="t : ${teams}"
+                    th:value="${t.id}"
+                    th:text="${t.name}"
+                    th:selected="${member.teamId} == ${t.id}">팀</option>
+        </select>
+    </div>
+
+    <button class="btn btn-primary" type="submit">저장</button>
+    <a class="btn btn-secondary" th:href="@{/home}">취소</a>
+</form>
+</body>
+</html>

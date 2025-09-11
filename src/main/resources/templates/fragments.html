@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- 사이드바 -->
+<!--<nav th:fragment="sidebar" class="h-100">
+    <div class="fw-bold mb-3" style="font-size:1.1rem;">xTreamBot</div>
+    <div class="nav flex-column">
+        <a class="nav-link text-secondary" href="#">영업 대시보드</a>
+        <a class="nav-link text-secondary" href="#">상담화면</a>
+        <a class="nav-link text-secondary" href="#">상담관리</a>
+        <a class="nav-link text-secondary" href="#">상담이력 조회</a>
+        <a class="nav-link text-white fw-semibold" href="#">상담사 & 팀 관리</a>
+    </div>
+</nav>-->
+
+<!-- 팀 테이블 -->
+<section th:fragment="teamTable(teams)">
+    <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="fw-semibold">팀 관리</div>
+            <div class="d-flex gap-2">
+                <div class="input-group input-group-sm" style="width:220px">
+                    <span class="input-group-text bg-transparent text-secondary border-0">검색</span>
+                    <input type="text" class="form-control" placeholder="팀명 검색">
+                </div>
+                <a class="btn btn-primary btn-sm" th:href="@{/teams/new}">+ 팀 추가</a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th style="width:45%">팀명</th>
+                    <th class="text-center" style="width:15%">인원수</th>
+                    <th class="text-center" style="width:40%">관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- ⬇ 각 행 클릭 시 오른쪽/아래 표 갱신 -->
+                <tr th:each="t : ${teams}"
+                    style="cursor:pointer"
+                    th:attr="data-team-id=${t.id}"
+                    onclick="loadTeamMembers(this)">
+                    <td>
+                        <span th:text="${t.name}">팀이름</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge bg-primary" th:text="${t.size + '명'}">0명</span>
+                    </td>
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-2" onclick="event.stopPropagation()">
+                            <a class="btn btn-warning btn-sm" th:href="@{'/teams/' + ${t.id} + '/edit'}">수정</a>
+                            <form th:action="@{'/teams/' + ${t.id} + '/delete'}"
+                                  method="post" class="d-inline-block"
+                                  onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <button class="btn btn-danger btn-sm" type="submit">삭제</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(teams)}">
+                    <td colspan="3" class="text-center py-4 text-secondary">등록된 팀이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer py-2">
+            <nav th:replace="~{fragments :: pagination}"></nav>
+        </div>
+    </div>
+</section>
+
+<!-- 선택 팀의 상담사 테이블 (오른쪽) -->
+<section th:fragment="selectedTeamMembersTable(selectedTeamName, selectedTeamMembers)">
+    <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <!-- ⬇ JS가 여기 텍스트를 바꿉니다 -->
+            <span class="fw-semibold" id="selected-team-title">팀을 선택하세요.</span>
+            <div class="input-group input-group-sm" style="width:260px">
+                <span class="input-group-text bg-transparent text-secondary border-0">검색</span>
+                <input type="text" class="form-control" placeholder="이름/ID 검색">
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <table class="table align-middle mb-0">
+                <thead>
+                <tr>
+                    <th style="width:20%">상담사 ID</th>
+                    <th style="width:25%">이름</th>
+                    <th class="text-center" style="width:15%">현재 상태</th>
+                    <th class="text-center" style="width:20%">근속기간</th>
+                    <th class="text-center" style="width:20%">근속일범위</th>
+                </tr>
+                </thead>
+                <!-- ⬇ JS가 이 tbody를 갱신합니다 -->
+                <tbody id="team-members-body">
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-secondary">팀을 선택하세요.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer py-2">
+            <nav th:replace="~{fragments :: pagination}"></nav>
+        </div>
+    </div>
+</section>
+
+<!-- 전체 상담사 테이블 -->
+<section th:fragment="membersTable(teams, members)">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+                <span class="fw-semibold">전체 상담사 목록</span>
+                <div class="d-flex flex-wrap gap-2">
+                    <select class="form-select form-select-sm" style="width:140px">
+                        <option value="">상태: 전체</option>
+                        <option>ACTIVE</option><option>IDLE</option><option>LEAVE</option>
+                    </select>
+                    <select class="form-select form-select-sm" style="width:140px">
+                        <option value="">팀: 전체</option>
+                        <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.name}">팀</option>
+                    </select>
+                    <div class="input-group input-group-sm" style="width:240px">
+                        <span class="input-group-text bg-transparent text-secondary border-0">검색</span>
+                        <input type="text" class="form-control" placeholder="이름/ID 검색">
+                    </div>
+                    <a class="btn btn-primary btn-sm" th:href="@{/members/new}">+ 상담사 추가</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            <table class="table align-middle mb-0">
+                <thead>
+                <tr>
+                    <th style="width:16%">상담사ID</th>
+                    <th style="width:18%">이름</th>
+                    <th style="width:20%">팀</th>
+                    <th class="text-center" style="width:14%">현재 상태</th>
+                    <th class="text-center" style="width:12%">근속기간</th>
+                    <th class="text-center" style="width:20%">근속일범위</th>
+                    <th class="text-center" style="width:10%">수정</th>
+                </tr>
+                </thead>
+
+                <!-- ✅ 항상 서버에서 내려온 전체 members를 렌더 -->
+                <tbody>
+                <tr th:each="m : ${members}">
+                    <td th:text="${m.id}">1</td>
+                    <td th:text="${m.name}">홍길동</td>
+                    <td th:text="${m.team != null ? m.team.name : '-'}">팀명</td>
+                    <td class="text-center">
+            <span class="badge"
+                  th:classappend="${
+                      m.serviceInfo != null && m.serviceInfo.status != null && m.serviceInfo.status.name()=='ACTIVE' ? ' bg-success' :
+                      (m.serviceInfo != null && m.serviceInfo.status != null && m.serviceInfo.status.name()=='IDLE' ? ' bg-warning' : ' bg-danger')
+                  }"
+                  th:text="${m.serviceInfo != null ? m.serviceInfo.status : '-'}">ACTIVE</span>
+                    </td>
+                    <td class="text-center" th:text="${m.serviceInfo != null ? m.serviceInfo.tenureHuman : '-'}">-</td>
+                    <td class="text-center">
+                        <span th:text="${m.serviceInfo != null ? m.serviceInfo.startDate : ''}"></span>
+                        <span> ~ </span>
+                        <span th:text="${m.serviceInfo != null && m.serviceInfo.endDate != null ? m.serviceInfo.endDate : '-'}">-</span>
+                    </td>
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-2">
+                            <a class="btn btn-warning btn-sm" th:href="@{'/members/' + ${m.id} + '/edit'}">수정</a>
+                            <form th:action="@{'/members/' + ${m.id} + '/delete'}"
+                                  method="post" class="d-inline-block"
+                                  onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <button class="btn btn-danger btn-sm" type="submit">삭제</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${members == null or #lists.isEmpty(members)}">
+                    <td colspan="7" class="text-center py-4 text-secondary">등록된 상담사가 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer py-2">
+            <nav th:replace="~{fragments :: pagination}"></nav>
+        </div>
+    </div>
+</section>
+
+
+<!-- 페이지네이션 -->
+<nav th:fragment="pagination">
+    <!--<ul class="pagination pagination-sm mb-0 justify-content-center">
+        <li class="page-item disabled"><span class="page-link">이전</span></li>
+        <li class="page-item active"><span class="page-link">1</span></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">다음</a></li>
+    </ul>-->
+</nav>
+
+</body>
+</html>

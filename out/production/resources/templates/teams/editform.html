@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>팀 수정</title>
+</head>
+<body>
+<form th:action="@{'/teams/' + ${team.id} + '/edit'}" method="post">
+    <div class="mb-3">
+        <label>팀명</label>
+        <input class="form-control" type="text" name="name" th:value="${team.name}" required/>
+    </div>
+    <button class="btn btn-primary" type="submit">저장</button>
+    <a class="btn btn-secondary" type="button" th:href="@{/home}">취소</a>
+</form>
+</body>
+</html>

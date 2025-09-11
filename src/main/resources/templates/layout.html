@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:fragment="base(content)">
+<head>
+    <meta charset="UTF-8" />
+    <title>Team Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root{ --side-w: 240px; }
+        body { background:#0f1114; color:#e9ecef; }
+        .app { display:flex; min-height:100vh; }
+        .sidebar {
+          width: var(--side-w); background:#0b0d10; border-right:1px solid rgba(255,255,255,.06);
+          padding:16px 12px; position:sticky; top:0; height:100vh;
+        }
+        .main { flex:1; padding:24px; }
+        .card { background:#161a1e; border:1px solid rgba(255,255,255,.08); border-radius:16px; overflow:hidden; }
+        .card-header { background:transparent; color:#fff; border-bottom:1px solid rgba(255,255,255,.08);}
+        .table { --bs-table-bg: transparent; color:#dfe6ee; }
+        .table thead th { color:#9fb0c3; font-weight:600; }
+        .badge-pill { border-radius:999px; padding:.35rem .6rem; font-weight:600; font-size:.75rem; }
+        .badge-green { background:#0f5132; }
+        .badge-orange { background:#7a4b1a; }
+        .badge-red { background:#6b2323; }
+        .btn-soft { background:#1b2127; color:#e9ecef; border:1px solid #2a2f35; border-radius:10px; }
+        .btn-soft:hover { background:#222a31; }
+        .pagination .page-link { background:#0f1317; color:#dfe6ee; border-color:#2a2f35; }
+        .pagination .page-item.active .page-link { background:#2a3440; border-color:#2a3440; }
+
+        /* ===== overrides: 표 글씨/배지 색을 확실히 밝게 ===== */
+        .table tbody td,
+        .table tbody th,
+        .table thead th,
+        .table thead td {
+          color:#f8f9fa !important; /* 거의 흰색 */
+        }
+        .badge { color:#fff !important; } /* 배지 안 글자는 무조건 흰색 */
+
+        /* 상태 배지 색을 더 또렷하게 */
+        .badge-green  { background:#198754 !important; color:#fff !important; }
+        .badge-orange { background:#fd7e14 !important; color:#fff !important; }
+        .badge-red    { background:#dc3545 !important; color:#fff !important; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar" th:replace="~{fragments :: sidebar}"></aside>
+    <main class="main">
+        <div th:insert="${content}"></div>
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    async function loadTeamMembers(row) {
+      try {
+
+
+        const teamId = row.getAttribute("data-team-id");
+        const teamName = row.querySelector("td:first-child")?.innerText?.trim() ?? "";
+
+        // 제목 교체: "팀을 선택하세요." -> "{팀명} 소속 상담사"
+        const titleEl = document.getElementById("selected-team-title");
+        if (titleEl) titleEl.textContent = teamName ? `${teamName} 소속 상담사` : "소속 상담사";
+
+        // 오른쪽 표만 갱신
+        const res = await fetch(`/api/members/by-team/${teamId}`, { headers: { "Accept": "application/json" } });
+        if (!res.ok) return renderMembersError(`서버 오류 (HTTP ${res.status})`);
+
+        const members = await res.json();
+        renderMembersTableRight(members);
+      } catch (e) {
+        console.error(e);
+        renderMembersError("불러오기에 실패했습니다.");
+      }
+    }
+
+    function renderMembersTableRight(members) {
+      const tbody = document.getElementById("team-members-body");
+      if (!tbody) return;
+
+      if (!members || members.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-secondary">소속 상담사가 없습니다.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = members.map(rowHtmlRight).join("");
+    }
+
+    function rowHtmlRight(m) {
+      const st = m.status || '-';
+      const badge =
+        st === 'ACTIVE' ? 'bg-success' :
+        st === 'IDLE'   ? 'bg-warning' :
+        st === 'LEAVE'  ? 'bg-danger'  : 'bg-secondary';
+      const start = m.startDate ?? '';
+      const end   = m.endDate  ?? '-';
+      const tenure = m.tenureHuman ?? '-';
+      return `
+        <tr>
+          <td>${m.id}</td>
+          <td>${m.name ?? ''}</td>
+          <td class="text-center"><span class="badge ${badge}">${st}</span></td>
+          <td class="text-center">${tenure}</td>
+          <td class="text-center">${start} ~ ${end}</td>
+        </tr>
+      `;
+    }
+
+    function renderMembersError(message) {
+      const tbodyR = document.getElementById("team-members-body");
+      if (tbodyR) tbodyR.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">${message}</td></tr>`;
+    }
+</script>
+
+
+
+</body>
+</html>

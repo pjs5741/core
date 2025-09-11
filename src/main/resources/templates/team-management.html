@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: base(~{::body})">
+<body>
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="m-0">Team Management</h2>
+    <span class="btn-soft badge-pill">베타</span>
+</div>
+
+<div class="row g-3">
+    <!-- 좌상단: 팀 -->
+    <div class="col-12 col-xl-6" th:replace="fragments :: teamTable(${teams})"></div>
+
+    <!-- 우상단: 선택 팀의 상담사 -->
+    <div class="col-12 col-xl-6"
+         th:replace="fragments :: selectedTeamMembersTable(${selectedTeamName}, ${selectedTeamMembers})"></div>
+
+    <!-- 하단: 전체 상담사 -->
+    <div class="col-12" th:replace="fragments :: membersTable(${teams}, ${members})"></div>
+</div>
+</body>
+</html>
