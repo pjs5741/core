@@ -1,4 +1,4 @@
-package counsel.core.controller;
+package counsel.core.domain.Team;
 
 public class TeamForm {
     private String name;

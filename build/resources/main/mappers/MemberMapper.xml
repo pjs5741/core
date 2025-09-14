@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="counsel.core.mapper.MemberMapper">
+
+    <resultMap id="MemberMap" type="counsel.core.domain.member.Member">
+        <id     property="id"   column="id"/>
+        <result property="name" column="name"/>
+
+        <!-- Team -->
+        <association property="team" javaType="counsel.core.domain.Team.Team">
+            <id     property="id"   column="team_id"/>
+            <result property="name" column="team_name"/>
+        </association>
+
+        <!-- ServiceInfo (status/start/end) -->
+        <association property="serviceInfo" javaType="counsel.core.domain.member.ServiceInfo.ServiceInfo">
+            <result property="status"    column="status"/>
+            <result property="startDate" column="start_date"/>
+            <result property="endDate"   column="end_date"/>
+        </association>
+    </resultMap>
+
+    <!-- 팀 이름이 필요 없으면 조인 없이도 됨 -->
+    <select id="findAll" resultMap="MemberMap">
+        SELECT m.id, m.name,
+        m.team_id,
+        t.name AS team_name,
+        m.status, m.start_date, m.end_date
+        FROM members m
+        LEFT JOIN teams t ON t.id = m.team_id
+        ORDER BY m.id
+    </select>
+
+    <select id="findById" resultMap="MemberMap">
+        SELECT m.id, m.name, m.team_id
+        FROM members m
+        WHERE m.id = #{id}
+    </select>
+
+    <select id="findAllByTeamIdFetch" resultMap="MemberMap">
+        SELECT m.id, m.name,
+        m.team_id,
+        t.name AS team_name,
+        m.status, m.start_date, m.end_date
+        FROM members m
+        LEFT JOIN teams t ON t.id = m.team_id
+        WHERE m.team_id = #{teamId}
+        ORDER BY m.id
+    </select>
+
+    <!-- INSERT/UPDATE 에서는 중첩 프로퍼티 #{team.id} 사용 -->
+    <insert id="insert" parameterType="counsel.core.domain.member.Member"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO members (name, team_id)
+        VALUES (#{name}, #{team.id})
+    </insert>
+
+    <update id="update" parameterType="counsel.core.domain.member.Member">
+        UPDATE members
+        SET
+        name       = #{name},
+        team_id    = #{team.id},
+        status     = #{serviceInfo.status},
+        start_date = #{serviceInfo.startDate},
+        end_date   = #{serviceInfo.endDate}
+        WHERE id = #{id}
+    </update>
+
+
+
+    <delete id="delete">
+        DELETE FROM members WHERE id = #{id}
+    </delete>
+</mapper>

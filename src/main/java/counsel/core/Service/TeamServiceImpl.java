@@ -1,3 +1,4 @@
+/*
 package counsel.core.Service;
 
 import counsel.core.Repository.MemberRepository;
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@Transactional
+*/
+/*@Service
+@Transactional*//*
+
 public class TeamServiceImpl implements TeamService{
 
 
@@ -52,18 +55,14 @@ public class TeamServiceImpl implements TeamService{
                 .orElseThrow(() -> new IllegalArgumentException("팀을 찾을 수 없습니다. id=" + id));
     }
 
-    @Override
-    public void delete(Long id) {
-        Team team = teamRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("삭제할 팀이 없습니다. id=" + id));
-        teamRepository.deleteById(id);
-    }
+
 
     @Transactional
-    public void deleteTeamSafely(Long teamId) {
+    public void deleteTeamSafely(Long id) {
         // 1) 소속 해제
-        memberRepository.unassignAllByTeamId(teamId);
+        memberRepository.unassignAllByTeamId(id);
         // 2) 팀 삭제
-        teamRepository.deleteById(teamId);
+        teamRepository.deleteById(id);
     }
 }
+*/

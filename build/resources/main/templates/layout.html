@@ -53,8 +53,7 @@
 <script>
     async function loadTeamMembers(row) {
       try {
-        document.querySelectorAll('tr[data-team-id]').forEach(tr => tr.classList.remove('table-active'));
-        row.classList.add('table-active');
+
 
         const teamId = row.getAttribute("data-team-id");
         const teamName = row.querySelector("td:first-child")?.innerText?.trim() ?? "";

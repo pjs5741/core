@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="counsel.core.mapper.TeamMapper">
+
+    <resultMap id="TeamMap" type="counsel.core.domain.Team.Team">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="TeamMap">
+        SELECT id, name
+        FROM teams
+        ORDER BY id
+    </select>
+
+    <select id="findById" resultMap="TeamMap">
+        SELECT id, name
+        FROM teams
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="counsel.core.domain.Team.Team"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO teams(name) VALUES (#{name})
+    </insert>
+
+    <update id="update" parameterType="counsel.core.domain.Team.Team">
+        UPDATE teams SET name = #{name} WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM teams WHERE id = #{id}
+    </delete>
+
+    <!-- 멤버 소속 해제(팀 안전 삭제용) -->
+    <update id="unassignAllMembers">
+        UPDATE members SET team_id = NULL WHERE team_id = #{teamId}
+    </update>
+
+    <select id="countMembers" resultType="long">
+        SELECT COUNT(*) FROM members WHERE team_id = #{teamId}
+    </select>
+
+
+    <resultMap id="TeamWithCountMap" type="counsel.core.api.dto.TeamResp">
+        <constructor>
+            <arg column="id"           javaType="long"/>
+            <arg column="name"         javaType="string"/>
+            <arg column="member_count" javaType="long"/>
+        </constructor>
+    </resultMap>
+
+    <select id="findAllWithCount" resultMap="TeamWithCountMap">
+        SELECT
+        t.id AS id ,
+        t.name AS name,
+        COUNT(m.id) AS member_Count
+        FROM teams t
+        LEFT JOIN members m ON m.team_id = t.id
+        GROUP BY t.id, t.name
+        ORDER BY t.id
+    </select>
+
+</mapper>

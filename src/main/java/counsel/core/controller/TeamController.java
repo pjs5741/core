@@ -2,6 +2,7 @@ package counsel.core.controller;
 
 import counsel.core.domain.Team.Team;
 import counsel.core.Service.TeamService;
+import counsel.core.domain.Team.TeamForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class TeamController {
     // 팀 등록 폼
     @GetMapping("/teams/new")
     public String newForm() {
-        return "teams/form";  // templates/teams/form.html
+        return "teams/form";
     }
 
 

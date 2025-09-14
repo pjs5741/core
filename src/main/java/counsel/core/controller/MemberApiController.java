@@ -1,6 +1,7 @@
 package counsel.core.controller;
 
-import counsel.core.Repository.MemberRepository;
+//import counsel.core.Repository.MemberRepository;
+import counsel.core.Service.MemberService;
 import counsel.core.api.dto.MemberSimpleResp;
 import counsel.core.domain.member.Member;
 import org.slf4j.Logger;
@@ -14,15 +15,21 @@ import java.util.List;
 public class MemberApiController {
 
     private static final Logger log = LoggerFactory.getLogger(MemberApiController.class);
-    private final MemberRepository memberRepository;
+    //private final MemberRepository memberRepository;
 
-    public MemberApiController(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
+    /*public MemberApiController(MemberRepository memberRepository) {
+       // this.memberRepository = memberRepository;
+    }*/
+
+    private final MemberService memberService;
+
+    public MemberApiController(MemberService memberService){
+        this.memberService = memberService;
     }
 
     @GetMapping("/by-team/{teamId}")
     public List<MemberSimpleResp> getMembersByTeam(@PathVariable Long teamId) {
-        var list = memberRepository.findAllByTeamIdFetch(teamId);
+        var list = memberService.findAllByTeamIdFetch(teamId);
         return list.stream().map(this::toResp).toList();
     }
 

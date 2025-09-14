@@ -3,16 +3,16 @@ package counsel.core.domain.Team;
 
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
+/*@Entity
+@Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = "name"))*/
 public class Team {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   /* @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)*/
     private Long id;
         private String name;
 
-    protected Team() {}
+    public Team() {}
     public Team(String name) {
         this(null, name);
     }

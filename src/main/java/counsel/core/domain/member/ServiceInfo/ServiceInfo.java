@@ -36,6 +36,7 @@ public class ServiceInfo {
 
     @Transient
     public String getTenureHuman() {
+        if (startDate == null) return "startDate is null";
         LocalDate end = endDate != null ? endDate : LocalDate.now();
         Period p = Period.between(startDate, end);
         int y = Math.max(p.getYears(), 0);

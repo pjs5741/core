@@ -4,21 +4,21 @@ import counsel.core.domain.Team.Team;
 import counsel.core.domain.member.ServiceInfo.ServiceInfo;
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "members")
+/*@Entity
+@Table(name = "members")*/
 public class Member {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable=false, length=50)
+    //@Column(nullable=false, length=50)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id") // null 허용 → 미배정 가능
+  //  @ManyToOne(fetch = FetchType.LAZY)
+   // @JoinColumn(name = "team_id") // null 허용 → 미배정 가능
     private Team team;
 
-    @Embedded
+ //   @Embedded
     private ServiceInfo serviceInfo;
 
     protected Member() {} // JPA 기본 생성자

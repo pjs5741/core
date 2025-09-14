@@ -1,3 +1,4 @@
+/*
 package counsel.core.Service;
 
 import counsel.core.Repository.MemberRepository;
@@ -22,18 +23,18 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void join(Member member) {
         // 필요시 중복 검사 등 추가
-        memberRepository.save(member);
+       // memberRepository.save(member);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Member> findMember(Long memberId) {
-        return memberRepository.findById(memberId);
+        return null;//memberRepository.findById(memberId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Member> findAll() {
-        return memberRepository.findAll();
+        return null;//memberRepository.findAll();
     }
-}
+}*/

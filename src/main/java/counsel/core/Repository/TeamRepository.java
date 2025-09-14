@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface TeamRepository extends JpaRepository<Team,Long> {
+public interface TeamRepository  {
     boolean existsByName(String name);
    /* Team save(Team team);
     Optional<Team>  findById(Long id);

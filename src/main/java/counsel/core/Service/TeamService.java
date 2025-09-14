@@ -1,5 +1,6 @@
 package counsel.core.Service;
 
+import counsel.core.api.dto.TeamResp;
 import counsel.core.domain.Team.Team;
 import counsel.core.domain.member.Member;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,13 @@ public interface TeamService {
 
     Team join(Team team);
 
-    Optional<Team> findTeam(Long teamId);
+    Optional<Team> findTeam(Long id);
     List<Team> findAll();
     void update(Long id, String name);
 
-    Team findById(Long id);
+    Optional<Team> findById(Long id);
+    void deleteTeamSafely(Long id);
     void delete(Long id);
-    void deleteTeamSafely(Long teamId);
+    List<TeamResp> findAllWithCount();
+
 }
