@@ -30,22 +30,8 @@ public class MemberApiController {
     @GetMapping("/by-team/{teamId}")
     public List<MemberSimpleResp> getMembersByTeam(@PathVariable Long teamId) {
         var list = memberService.findAllByTeamIdFetch(teamId);
-        return list.stream().map(this::toResp).toList();
+        return list.stream().map(MemberSimpleResp::from).toList();
     }
 
-    private MemberSimpleResp toResp(Member m) {
-        var info = m.getServiceInfo();
-        String status = (info != null && info.getStatus() != null) ? info.getStatus().name() : "-";
-        String teamName = (m.getTeam() != null) ? m.getTeam().getName() : "-";
-        String tenure = (info != null && info.getTenureHuman() != null) ? info.getTenureHuman() : "-";
-        return new MemberSimpleResp(
-                m.getId(),
-                m.getName(),
-                status,
-                teamName,
-                tenure,
-                (info != null ? info.getStartDate() : null),
-                (info != null ? info.getEndDate() : null)
-        );
-    }
+
 }
