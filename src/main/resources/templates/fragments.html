@@ -71,7 +71,7 @@
     </div>
 </section>
 
-<!-- 선택 팀의 상담사 테이블 (오른쪽) -->
+
 <section th:fragment="selectedTeamMembersTable(selectedTeamName, selectedTeamMembers)">
     <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -160,6 +160,7 @@
                   th:text="${m.serviceInfo != null ? m.serviceInfo.status : '-'}">ACTIVE</span>
                     </td>
                     <td class="text-center" th:text="${m.serviceInfo != null ? m.serviceInfo.tenureHuman : '-'}">-</td>
+
                     <td class="text-center">
                         <span th:text="${m.serviceInfo != null ? m.serviceInfo.startDate : ''}"></span>
                         <span> ~ </span>

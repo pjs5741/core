@@ -1,5 +1,5 @@
 // src/main/java/counsel/core/api/dto/MemberSimpleResp.java
-package counsel.core.api.dto;
+package counsel.core.api.dto.memberdto;
 
 import counsel.core.domain.member.Member;
 

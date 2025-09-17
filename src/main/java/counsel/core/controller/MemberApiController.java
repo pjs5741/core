@@ -2,8 +2,7 @@ package counsel.core.controller;
 
 //import counsel.core.Repository.MemberRepository;
 import counsel.core.Service.MemberService;
-import counsel.core.api.dto.MemberSimpleResp;
-import counsel.core.domain.member.Member;
+import counsel.core.api.dto.memberdto.MemberSimpleResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;

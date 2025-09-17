@@ -1,9 +1,7 @@
 package counsel.core.Service;
 
-import counsel.core.api.dto.TeamResp;
+import counsel.core.api.dto.teamdto.TeamResp;
 import counsel.core.domain.Team.Team;
-import counsel.core.domain.member.Member;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;

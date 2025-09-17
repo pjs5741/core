@@ -25,6 +25,7 @@
 
     <div class="mb-3">
         <label>입사일</label>
+        <option th:each="m : ${member}"> </option>
         <input class="form-control" type="date" name="startDate" th:value="${member.startDate}" required />
     </div>
 
