@@ -1,4 +1,4 @@
-package counsel.core.api.dto;
+package counsel.core.api.dto.teamdto;
 
 public record TeamResp(
         Long id,

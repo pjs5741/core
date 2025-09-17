@@ -1,20 +1,15 @@
 package counsel.core.controller;
 
 //import counsel.core.Repository.MemberRepository;
-import counsel.core.Repository.TeamRepository;
 import counsel.core.Service.MemberService;
-import counsel.core.Service.MemberServiceMyBatis;
 import counsel.core.Service.TeamService;
-import counsel.core.api.dto.TeamResp;
-import counsel.core.domain.Team.Team;
+import counsel.core.api.dto.teamdto.TeamResp;
 import counsel.core.domain.member.Member;
-import counsel.core.mapper.TeamMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {

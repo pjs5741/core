@@ -4,7 +4,7 @@ import counsel.core.Service.MemberService;
 import counsel.core.Service.TeamService;
 import counsel.core.domain.Team.Team;
 import counsel.core.domain.member.Member;
-import counsel.core.domain.member.MemberForm;
+import counsel.core.api.dto.memberdto.MemberForm;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +29,11 @@ public class MemberController {
     /** 생성 폼 */
     @GetMapping("/new")
     public String newForm(Model model) {
-        model.addAttribute("member", new MemberForm()); // 기본 생성자 가능
+
+
+        MemberForm memberForm = new MemberForm(1L,"홍길동",null,null,null,null);
+
+        model.addAttribute("member", memberForm);
         model.addAttribute("teams", teamService.findAll());
         return "members/new";
     }
@@ -45,8 +49,8 @@ public class MemberController {
             return "members/new";
         }
 
-        Team team = (form.getTeamId() != null)
-                ? teamService.findById(form.getTeamId())
+        Team team = (form.teamId() != null)
+                ? teamService.findById(form.teamId())
                 .orElseThrow(() -> new NoSuchElementException("팀 없음"))
                 : null;
 
@@ -60,8 +64,17 @@ public class MemberController {
     public String editForm(@PathVariable Long id, Model model) {
         Member m = memberService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("멤버 없음"));
-        model.addAttribute("member", MemberForm.from(m)); // 엔티티 -> 폼
+
+        MemberForm form = MemberForm.from(m);
+
+        System.out.println("DEBUG MemberId=" + form.id());
+        System.out.println("DEBUG startDate=" + form.startDate());
+        System.out.println("DEBUG endDate=" + form.endDate());
+
+
+        model.addAttribute("member", form);
         model.addAttribute("teams", teamService.findAll());
+
         return "members/edit";
     }
 
@@ -80,13 +93,14 @@ public class MemberController {
         Member m = memberService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("멤버 없음"));
 
-        Team team = (form.getTeamId() != null)
-                ? teamService.findById(form.getTeamId())
+        Team team = (form.teamId() != null)
+                ? teamService.findById(form.teamId())
                 .orElseThrow(() -> new NoSuchElementException("팀 없음"))
                 : null;
 
         form.applyTo(m, team);
         memberService.update(m);
+
         return "redirect:/home";
     }
 

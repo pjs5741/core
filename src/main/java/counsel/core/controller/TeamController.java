@@ -2,11 +2,13 @@ package counsel.core.controller;
 
 import counsel.core.domain.Team.Team;
 import counsel.core.Service.TeamService;
-import counsel.core.domain.Team.TeamForm;
+import counsel.core.api.dto.teamdto.TeamForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.NoSuchElementException;
 
 @Controller
 public class TeamController {
@@ -26,7 +28,7 @@ public class TeamController {
 
     @PostMapping("/teams/new")
     public String create(TeamForm form) {
-        String name = form.getName();
+        String name = form.name();
         if (name != null && !name.trim().isEmpty()) {
             Team team = new Team(name.trim());
             teamService.join(team);
@@ -36,7 +38,12 @@ public class TeamController {
 
     @GetMapping("/teams/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
-        model.addAttribute("team", teamService.findById(id));
+        Team team = teamService.findById(id)
+                .orElseThrow(()->new NoSuchElementException("해당 팀 없음"));
+
+        TeamForm teamForm = new TeamForm(0L,"-");
+
+        model.addAttribute("team",teamForm.from(team) );
         return "teams/editform";
     }
 

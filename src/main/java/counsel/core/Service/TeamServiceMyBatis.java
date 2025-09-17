@@ -1,6 +1,6 @@
 package counsel.core.Service;
 
-import counsel.core.api.dto.TeamResp;
+import counsel.core.api.dto.teamdto.TeamResp;
 import counsel.core.domain.Team.Team;
 import counsel.core.mapper.TeamMapper;
 

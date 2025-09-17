@@ -43,7 +43,7 @@
     </select>
 
 
-    <resultMap id="TeamWithCountMap" type="counsel.core.api.dto.TeamResp">
+    <resultMap id="TeamWithCountMap" type="counsel.core.api.dto.teamdto.TeamResp">
         <constructor>
             <arg column="id"           javaType="long"/>
             <arg column="name"         javaType="string"/>

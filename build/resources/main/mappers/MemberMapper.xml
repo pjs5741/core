@@ -17,8 +17,8 @@
         <!-- ServiceInfo (status/start/end) -->
         <association property="serviceInfo" javaType="counsel.core.domain.member.ServiceInfo.ServiceInfo">
             <result property="status"    column="status"/>
-            <result property="startDate" column="start_date"/>
-            <result property="endDate"   column="end_date"/>
+            <result property="startDate"  column="start_date" jdbcType="DATE"/>
+            <result property="endDate"    column="end_date"   jdbcType="DATE"/>
         </association>
     </resultMap>
 
@@ -34,7 +34,7 @@
     </select>
 
     <select id="findById" resultMap="MemberMap">
-        SELECT m.id, m.name, m.team_id
+        SELECT m.id, m.name, m.team_id, m.status,m.start_date,m.end_date
         FROM members m
         WHERE m.id = #{id}
     </select>
@@ -53,8 +53,14 @@
     <!-- INSERT/UPDATE 에서는 중첩 프로퍼티 #{team.id} 사용 -->
     <insert id="insert" parameterType="counsel.core.domain.member.Member"
             useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO members (name, team_id)
-        VALUES (#{name}, #{team.id})
+        INSERT INTO members
+        (name, team_id, status, start_date, end_date)
+        VALUES
+        (#{name},
+        #{team.id, jdbcType=BIGINT},
+        #{serviceInfo.status, jdbcType=VARCHAR},
+        #{serviceInfo.startDate, jdbcType=DATE},
+        #{serviceInfo.endDate, jdbcType=DATE})
     </insert>
 
     <update id="update" parameterType="counsel.core.domain.member.Member">
